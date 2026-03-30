@@ -5,6 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +13,9 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(LivroException.class)
-    public ResponseEntity<String> handleLivroException(LivroException e) {
-        return ResponseEntity.status(400).body(e.getMessage());
+    public ResponseEntity<ErroResponse> handleLivroException(LivroException e) {
+        ErroResponse erro = new ErroResponse(400, e.getMessage(), LocalDateTime.now());
+        return ResponseEntity.status(400).body(erro);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
