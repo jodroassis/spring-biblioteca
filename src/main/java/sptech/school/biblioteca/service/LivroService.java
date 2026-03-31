@@ -19,7 +19,7 @@ public class LivroService {
 
     public Livro cadastrarLivro(Livro livro){
         if (livroRepository.existsById(livro.getIsbn())){
-            throw new LivroException("ISBN" + livro.getIsbn() + " já cadastrado");
+            throw new LivroException("ISBN " + livro.getIsbn() + " já cadastrado");
         }
         return livroRepository.save(livro);
     }
@@ -50,5 +50,13 @@ public class LivroService {
         }
         livro.setStatus(StatusLivro.DISPONIVEL);
         return livroRepository.save(livro);
+    }
+
+    public void deletar(String isbn) {
+        Livro livro = buscarPorIsbn(isbn);
+        if (livro.getStatus().equals(StatusLivro.EMPRESTADO)) {
+            throw new LivroException("Não é possível remover um livro emprestado");
+        }
+        livroRepository.delete(livro);
     }
 }

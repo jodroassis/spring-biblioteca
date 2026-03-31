@@ -3,9 +3,12 @@ package sptech.school.biblioteca.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.school.biblioteca.dto.LivroRequest;
+import sptech.school.biblioteca.dto.LivroResponse;
 import sptech.school.biblioteca.model.Livro;
 import sptech.school.biblioteca.service.LivroService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,32 +22,42 @@ public class LivroController {
     }
 
     @PostMapping
-    public ResponseEntity<Livro> cadastrarLivro(@Valid @RequestBody Livro livro) {
+    public ResponseEntity<LivroResponse> cadastrarLivro(@Valid @RequestBody LivroRequest request) {
+        Livro livro = request.toEntity();  // DTO -> entidade
         Livro cadastrado = livroService.cadastrarLivro(livro);
-        return ResponseEntity.status(201).body(cadastrado);
+        return ResponseEntity.status(201).body(LivroResponse.fromEntity(cadastrado)); // entidade -> DTO
     }
 
     @GetMapping("/{isbn}")
-    public ResponseEntity<Livro> buscarPorIsbn(@PathVariable String isbn) {
+    public ResponseEntity<LivroResponse> buscarPorIsbn(@PathVariable String isbn) {
         Livro buscado = livroService.buscarPorIsbn(isbn);
-        return ResponseEntity.status(200).body(buscado);
+        return ResponseEntity.status(200).body(LivroResponse.fromEntity(buscado));
     }
 
     @GetMapping
-    public ResponseEntity<List<Livro>> buscaTodos() {
+    public ResponseEntity<List<LivroResponse>> buscaTodos() {
         List<Livro> livros = livroService.buscarTodos();
-        return ResponseEntity.status(200).body(livros);
+        List<LivroResponse> resposta = livros.stream()
+                .map(LivroResponse::fromEntity)
+                .toList();
+        return ResponseEntity.status(200).body(resposta);
     }
 
     @PatchMapping("/{isbn}/emprestar")
-    public ResponseEntity<Livro> emprestar(@PathVariable String isbn) {
+    public ResponseEntity<LivroResponse> emprestar(@PathVariable String isbn) {
         Livro emprestado = livroService.emprestar(isbn);
-        return ResponseEntity.status(200).body(emprestado);
+        return ResponseEntity.status(200).body(LivroResponse.fromEntity(emprestado));
     }
 
     @PatchMapping("/{isbn}/devolver")
-    public ResponseEntity<Livro> devolver(@PathVariable String isbn) {
+    public ResponseEntity<LivroResponse> devolver(@PathVariable String isbn) {
         Livro devolvido = livroService.devolver(isbn);
-        return ResponseEntity.status(200).body(devolvido);
+        return ResponseEntity.status(200).body(LivroResponse.fromEntity(devolvido));
+    }
+
+    @DeleteMapping("/{isbn}")
+    public ResponseEntity<Void> deletar(@PathVariable String isbn) {
+        livroService.deletar(isbn);
+        return ResponseEntity.status(204).build();
     }
 }
