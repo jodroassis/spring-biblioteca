@@ -35,8 +35,20 @@ public class LivroController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LivroResponse>> buscaTodos() {
-        List<Livro> livros = livroService.buscarTodos();
+    public ResponseEntity<List<LivroResponse>> buscar(
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false) String autor
+    ) {
+        List<Livro> livros;
+
+        if (titulo != null){
+            livros = livroService.buscarPorTitulo(titulo);
+        } else if (autor != null) {
+            livros = livroService.buscarPorAutor(autor);
+        } else {
+            livros = livroService.buscarTodos();
+        }
+
         List<LivroResponse> resposta = livros.stream()
                 .map(LivroResponse::fromEntity)
                 .toList();

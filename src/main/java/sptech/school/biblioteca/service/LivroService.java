@@ -59,4 +59,20 @@ public class LivroService {
         }
         livroRepository.delete(livro);
     }
+
+    public List<Livro> buscarPorTitulo(String titulo){
+        List<Livro> livros = livroRepository.findByTituloContainingIgnoreCase(titulo);
+        if (livros.isEmpty()) {
+            throw new LivroException("Título não existe");
+        }
+        return livros;
+    }
+
+    public List<Livro> buscarPorAutor(String autor) {
+        List<Livro> livros = livroRepository.findByAutorContainingIgnoreCase(autor);
+        if (livros.isEmpty()) {
+            throw new LivroException("Autor não existe");
+        }
+        return livros;
+    }
 }
