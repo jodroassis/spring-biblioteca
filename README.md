@@ -9,6 +9,7 @@ REST API para gerenciamento de acervo de uma biblioteca, desenvolvida com Spring
 - Spring Data JPA
 - MySQL
 - Bean Validation (Jakarta)
+- Spring Security + JWT (autenticação stateless)
 - JUnit 5 + Mockito (testes unitários)
 
 ## Configuração
@@ -58,6 +59,63 @@ Controller → Service → Repository → DB
 - **`GlobalExceptionHandler`** — captura exceções e retorna respostas estruturadas:
   - `LivroException` → HTTP 400 com `ErroResponse` (`status`, `mensagem`, `timestamp`)
   - `MethodArgumentNotValidException` → HTTP 400 com mapa de campos e mensagens de validação
+
+## Autenticação
+
+A API usa JWT (Bearer Token). Todos os endpoints `/livros` exigem autenticação. Os endpoints `/auth` são públicos.
+
+### Endpoints de autenticação
+
+Base path: `/auth`
+
+| Método | Caminho | Descrição | Status |
+|--------|---------|-----------|--------|
+| `POST` | `/auth/cadastro` | Cadastrar usuário | 201 |
+| `POST` | `/auth/login` | Login e geração do token | 200 |
+
+### Exemplo de cadastro
+
+**Request**
+```json
+POST /auth/cadastro
+{
+  "email": "admin@biblioteca.com",
+  "senha": "123456",
+  "role": "ADMIN"
+}
+```
+
+> Roles disponíveis: `ADMIN`, `USER`
+
+### Exemplo de login
+
+**Request**
+```json
+POST /auth/login
+{
+  "email": "admin@biblioteca.com",
+  "senha": "123456"
+}
+```
+
+**Response** `200 OK`
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+### Usando o token
+
+Inclua o token no header de todas as requisições aos endpoints `/livros`:
+
+```
+Authorization: Bearer <token>
+```
+
+O token expira em **24 horas**.
+
+---
 
 ## API
 
