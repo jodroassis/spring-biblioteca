@@ -9,6 +9,7 @@ REST API para gerenciamento de acervo de uma biblioteca, desenvolvida com Spring
 - Spring Data JPA
 - MySQL
 - Bean Validation (Jakarta)
+- JUnit 5 + Mockito (testes unitários)
 
 ## Configuração
 
@@ -68,6 +69,8 @@ Base path: `/livros`
 |--------|---------|-----------|--------|
 | `POST` | `/livros` | Cadastrar livro | 201 |
 | `GET` | `/livros` | Listar todos os livros | 200 |
+| `GET` | `/livros?titulo={titulo}` | Buscar livros por título (parcial, case-insensitive) | 200 |
+| `GET` | `/livros?autor={autor}` | Buscar livros por autor (parcial, case-insensitive) | 200 |
 | `GET` | `/livros/{isbn}` | Buscar livro por ISBN | 200 |
 | `PATCH` | `/livros/{isbn}/emprestar` | Emprestar livro | 200 |
 | `PATCH` | `/livros/{isbn}/devolver` | Devolver livro | 200 |
